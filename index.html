@@ -75,7 +75,7 @@
         function drawOrder(userid,orderid, order)
         {
             var res ='';
-            res += '<div class="col">';
+            res += '<div class="col"'+' uid="'+userid+'" orderid="'+orderid+'" >';
             res += '<div class="card border-dark  mb-3" >';
             res += '<div class="card-body text-dark ">';
             res += '<h5 class="status">'+order['status']+'</h5>';
@@ -87,10 +87,10 @@
                                   Send to
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item" href="#">Pending</a></li>
-                                    <li><a class="dropdown-item" href="#">Preparing</a></li>
-                                    <li><a class="dropdown-item" href="#">On the way</a></li>
-                                    <li><a class="dropdown-item" href="#">Delivered</a></li>
+                                    <li><a class="dropdown-item" href ="#">Pending</a></li>
+                                    <li><a class="dropdown-item" href ="#">Preparing</a></li>
+                                    <li><a class="dropdown-item" href ="#">On the way</a></li>
+                                    <li><a class="dropdown-item" href ="#">Delivered</a></li>
                                 </ul>
                               </div>
                         </div>`;
@@ -101,6 +101,11 @@
         const ordersRef = ref(db, 'orders/');
 
         onValue(ordersRef, (snapshot) => {
+
+        $("#myTabContent #pending div:first").empty()
+        $("#myTabContent #preparing div:first").empty()
+        $("#myTabContent #ontheway div:first").empty()
+        $("#myTabContent #delivered div:first").empty()
         const data = snapshot.val();
         for (let uid in data) {
             for (let orderid in data[uid]) {
@@ -124,7 +129,13 @@
             }
         }
         
-        console.log(data)
+            $(".dropdown-menu").on("click", "li", function(event){
+                            var tar = $(event.target).parent().parent().parent().parent().parent().parent().parent()
+                            var uid = tar.attr('uid')
+                            var orderid = tar.attr('orderid')
+                            const ordersRef = ref(db, 'orders/' + uid + '/' + orderid + '/status');
+                            set(ordersRef, $(event.target).text());
+                        })
         });
 
       </script>
